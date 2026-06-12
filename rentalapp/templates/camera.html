@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cameras | Premium Optical Gear</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #10b981;
+            --secondary: #059669;
+            --bg: #010302;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.06);
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 100%, rgba(16, 185, 129, 0.08), transparent 50%);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* --- NAVIGATION --- */
+        .top-nav { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-glass {
+            background: var(--card-bg); border: 1px solid var(--border);
+            color: #fff; padding: 10px 22px; border-radius: 50px;
+            text-decoration: none; backdrop-filter: blur(10px); transition: 0.3s;
+            font-weight: 700; font-size: 0.8rem; letter-spacing: 1px;
+        }
+        .btn-glass:hover { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+
+        /* --- TITLE --- */
+        .page-title {
+            font-size: 3.5rem; font-weight: 900; text-align: center;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -1px; margin-top: 20px;
+        }
+
+        /* --- CARDS --- */
+        .rent-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 40px; overflow: hidden; transition: 0.4s ease-out;
+            height: 100%;
+        }
+        .rent-card:hover {
+            transform: scale(1.03); border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+        }
+
+        .img-container { position: relative; height: 240px; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: 1s; }
+        .rent-card:hover img { transform: scale(1.15); filter: contrast(1.1); }
+
+        .badge-status {
+            position: absolute; bottom: 20px; left: 20px;
+            padding: 5px 15px; border-radius: 10px; font-size: 10px; font-weight: 900;
+            backdrop-filter: blur(10px);
+        }
+        .available { background: rgba(16, 185, 129, 0.8); color: #fff; }
+        .booked { background: rgba(239, 68, 68, 0.8); color: #fff; }
+
+        .rent-details { padding: 35px; text-align: center; }
+        .item-name { font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; letter-spacing: -0.5px; }
+
+        .specs { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+        .spec-item { display: flex; flex-direction: column; align-items: center; }
+        .spec-item small { font-size: 9px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+        .spec-item span { font-size: 12px; font-weight: 700; color: var(--primary); }
+
+        .price { font-size: 2rem; font-weight: 900; margin-bottom: 25px; }
+        .price small { font-size: 0.9rem; color: #475569; font-weight: 400; }
+
+        .rent-btn {
+            display: inline-block; width: 100%; padding: 18px; border-radius: 20px;
+            background: #fff; color: #000; text-decoration: none;
+            font-weight: 900; font-size: 0.9rem; transition: 0.3s; border: none;
+        }
+        .rent-btn:hover { background: var(--primary); color: #fff; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(16, 185, 129, 0.3); }
+
+        @media (max-width: 768px) { .page-title { font-size: 2.2rem; } .rent-details { padding: 25px; } }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <a href="{% url 'home' %}" class="btn-glass"><i class="bi bi-arrow-left me-2"></i>EXIT TO HOME</a>
+    {% if request.user.is_staff %}
+    <a href="{% url 'admin_dashboard' %}" class="btn-glass text-success"><i class="bi bi-eye-fill me-2"></i>CORE ADMIN</a>
+    {% endif %}
+</div>
+
+<div class="container py-4">
+    <h1 class="page-title mb-5">OPTICAL ASSETS</h1>
+
+    <div class="row g-5">
+        {% for product in products %}
+        <div class="col-lg-4 col-md-6">
+            <div class="rent-card">
+                <div class="img-container">
+                    <img src="{{ product.image.url|default:'/static/default.jpg' }}">
+                    {% if product.available %}
+                    <span class="badge-status available">READY TO CAPTURE</span>
+                    {% else %}
+                    <span class="badge-status booked">IN FIELD</span>
+                    {% endif %}
+                </div>
+                <div class="rent-details">
+                    <h4 class="item-name">{{ product.name }}</h4>
+                    <div class="specs">
+                        <div class="spec-item"><small>Brand</small><span>{{ product.brand }}</span></div>
+                        <div class="spec-item" style="border-left: 1px solid #1e293b; border-right: 1px solid #1e293b; padding: 0 15px;"><small>Lens</small><span>{{ product.lens_type }}</span></div>
+                        <div class="spec-item"><small>Res</small><span>{{ product.megapixels }}MP</span></div>
+                    </div>
+                    <div class="price">₹{{ product.price_per_day }}<small>/day</small></div>
+                    
+                    {% if product.available %}
+                    <a href="{% url 'book_camera' product.id %}" class="rent-btn">ACQUIRE GEAR</a>
+                    {% else %}
+                    <button class="rent-btn" style="background: rgba(255,255,255,0.05); color: #334155;" disabled>DEPLOYED</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

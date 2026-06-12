@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<style>
+    :root {
+        --bg: #02040a;
+        --card-bg: rgba(13, 17, 23, 0.7);
+        --accent: #6366f1;
+        --neon-cyan: #00d2ff;
+        --neon-purple: #9d50bb;
+        --neon-green: #10b981;
+        --border: rgba(255, 255, 255, 0.05);
+    }
+
+    body {
+        background: var(--bg);
+        background-image: 
+            radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+            radial-gradient(circle at 90% 80%, rgba(0, 210, 255, 0.05) 0%, transparent 40%);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: #f1f5f9;
+        min-height: 100vh;
+    }
+
+    /* --- FUTURISTIC BACK BUTTON --- */
+    .nav-header {
+        padding: 30px 50px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .btn-exit {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid var(--border);
+        color: #fff;
+        padding: 10px 25px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        transition: 0.3s;
+        backdrop-filter: blur(10px);
+    }
+
+    .btn-exit:hover {
+        background: #fff;
+        color: #000;
+        box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    }
+
+    /* --- MAIN TITLE --- */
+    .tracking-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .tracking-header h1 {
+        font-weight: 800;
+        font-size: 3.5rem;
+        letter-spacing: -2px;
+        background: linear-gradient(to bottom, #fff, #64748b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* --- PREMIUM CATEGORY CARDS --- */
+    .category-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 35px;
+        padding: 35px;
+        backdrop-filter: blur(20px);
+        transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        height: 100%;
+        position: relative;
+    }
+
+    .category-card:hover {
+        transform: translateY(-15px);
+        border-color: var(--accent);
+        box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    }
+
+    .category-card::after {
+        content: "ACTIVE";
+        position: absolute;
+        top: 30px; right: 35px;
+        font-size: 0.6rem; font-weight: 900; color: var(--neon-green);
+        letter-spacing: 2px;
+    }
+
+    .cat-icon {
+        width: 65px; height: 65px;
+        border-radius: 20px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+        background: linear-gradient(135deg, rgba(255,255,255,0.05), transparent);
+        border: 1px solid var(--border);
+    }
+
+    /* --- DETAILED RENTAL TILES --- */
+    .deployment-tile {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--border);
+        border-radius: 24px;
+        padding: 20px;
+        margin-bottom: 20px;
+        transition: 0.3s;
+    }
+
+    .deployment-tile:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .tile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+    }
+
+    .user-tag {
+        font-weight: 800;
+        font-size: 1rem;
+        color: #fff;
+        display: block;
+    }
+
+    .asset-name {
+        color: var(--neon-cyan);
+        font-weight: 700;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+    }
+
+    .data-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .data-chip {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 8px 12px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        color: #94a3b8;
+        border: 1px solid var(--border);
+    }
+
+    .data-chip i { margin-right: 5px; color: var(--accent); }
+
+    /* --- LIVE STATUS INDICATOR --- */
+    .status-pulse {
+        width: 8px; height: 8px;
+        background: var(--neon-green);
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        box-shadow: 0 0 10px var(--neon-green);
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.5); opacity: 0.5; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: #475569;
+        font-style: italic;
+    }
+</style>
+
+<div class="nav-header">
+    <a href="{% url 'admin_dashboard' %}" class="btn-exit">
+        <i class="bi bi-cpu me-2"></i> CORE DASHBOARD
+    </a>
+    <div class="d-flex align-items-center gap-2">
+        <span class="status-pulse"></span>
+        <span style="font-size: 0.7rem; font-weight: 900; letter-spacing: 1px;">SYSTEM ONLINE</span>
+    </div>
+</div>
+
+<div class="container pb-5">
+    
+    <div class="tracking-header">
+        <h1>Live Deployments</h1>
+        <p class="text-muted">Monitoring active assets across the digital grid</p>
+    </div>
+
+    <div class="row g-4">
+        
+        <div class="col-lg-4">
+            <div class="category-card">
+                <div class="cat-icon" style="color: var(--neon-cyan);"><i class="bi bi-bicycle"></i></div>
+                <h4 class="fw-800 mb-4">Motor Fleet</h4>
+                
+                {% for b in bike %}
+                <div class="deployment-tile">
+                    <div class="tile-header">
+                        <div>
+                            <span class="user-tag">{{ b.user.username }}</span>
+                            <span class="asset-name">{{ b.bike.name }}</span>
+                        </div>
+                        <span class="badge rounded-pill bg-dark text-success border border-success" style="font-size: 0.6rem;">LIVE</span>
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-chip"><i class="bi bi-hash"></i> ID: #BK-{{ b.id }}</div>
+                        <div class="data-chip"><i class="bi bi-currency-rupee"></i> {{ b.bike.price_per_day }}/d</div>
+                        <div class="data-chip" style="grid-column: span 2;"><i class="bi bi-clock-history"></i> Active Deployment</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">No active fleet detected</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="category-card">
+                <div class="cat-icon" style="color: var(--neon-purple);"><i class="bi bi-laptop"></i></div>
+                <h4 class="fw-800 mb-4">Tech Nodes</h4>
+
+                {% for l in laptop %}
+                <div class="deployment-tile">
+                    <div class="tile-header">
+                        <div>
+                            <span class="user-tag">{{ l.user.username }}</span>
+                            <span class="asset-name">{{ l.laptop.name }}</span>
+                        </div>
+                        <span class="badge rounded-pill bg-dark text-info border border-info" style="font-size: 0.6rem;">LIVE</span>
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-chip"><i class="bi bi-hash"></i> ID: #LP-{{ l.id }}</div>
+                        <div class="data-chip"><i class="bi bi-currency-rupee"></i> {{ l.laptop.price_per_day }}/d</div>
+                        <div class="data-chip" style="grid-column: span 2;"><i class="bi bi-envelope"></i> {{ l.user.email|default:"No Email" }}</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">All tech nodes idle</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="category-card">
+                <div class="cat-icon" style="color: var(--neon-green);"><i class="bi bi-camera-reels"></i></div>
+                <h4 class="fw-800 mb-4">Optical Gear</h4>
+
+                {% for c in camera %}
+                <div class="deployment-tile">
+                    <div class="tile-header">
+                        <div>
+                            <span class="user-tag">{{ c.user.username }}</span>
+                            <span class="asset-name">{{ c.camera.name }}</span>
+                        </div>
+                        <span class="badge rounded-pill bg-dark text-warning border border-warning" style="font-size: 0.6rem;">LIVE</span>
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-chip"><i class="bi bi-hash"></i> ID: #CM-{{ c.id }}</div>
+                        <div class="data-chip"><i class="bi bi-currency-rupee"></i> {{ c.camera.price_per_day }}/d</div>
+                        <div class="data-chip" style="grid-column: span 2;"><i class="bi bi-calendar-check"></i> Monitoring Active</div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="empty-state">Optical sensors offline</div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

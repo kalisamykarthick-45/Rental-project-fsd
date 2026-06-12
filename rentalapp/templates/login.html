@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Login</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        body {
+            height: 100vh;
+            background: linear-gradient(270deg, #000428, #5c656d, #0f2027);
+            background-size: 600% 600%;
+            animation: gradientMove 10s ease infinite;
+            overflow: hidden;
+            color: white;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% }
+            50% { background-position: 100% }
+            100% { background-position: 0% }
+        }
+
+        /* ===== FLOATING PARTICLES ===== */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveParticles 20s linear infinite;
+        }
+
+        @keyframes moveParticles {
+            from { transform: translate(0, 0); }
+            to { transform: translate(-50px, -50px); }
+        }
+
+        /* ===== CARD ===== */
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            border-radius: 25px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(25px);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.7);
+            transition: 0.4s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 80px rgba(0, 242, 254, 0.4);
+        }
+
+        /* ===== TITLE ===== */
+        .title {
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        /* ===== FLOATING INPUT ===== */
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .custom-input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            outline: none;
+        }
+
+        .input-label {
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            color: #aaa;
+            transition: 0.3s;
+            pointer-events: none;
+        }
+
+        .custom-input:focus + .input-label,
+        .custom-input:not(:placeholder-shown) + .input-label {
+            top: -8px;
+            font-size: 12px;
+            color: #00f2fe;
+        }
+
+        .custom-input:focus {
+            box-shadow: 0 0 12px #00f2fe;
+        }
+
+        /* ===== PASSWORD TOGGLE ===== */
+        .toggle-pass {
+            position: absolute;
+            right: 15px;
+            top: 14px;
+            cursor: pointer;
+        }
+
+        /* ===== BUTTON ===== */
+        .btn-premium {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00f2fe, #4facfe);
+            color: black;
+            transition: 0.3s;
+        }
+
+        .btn-premium:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px #00f2fe;
+        }
+
+        /* ===== LINK ===== */
+        .login-link {
+            color: #00f2fe;
+            text-decoration: none;
+        }
+
+        .login-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media(max-width: 500px) {
+            .login-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+
+    <div class="login-card">
+
+        <h3 class="text-center mb-4 title">🚀 Welcome Back</h3>
+
+        {% for message in messages %}
+        <p class="text-danger text-center">{{ message }}</p>
+        {% endfor %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <input type="text" name="username" class="custom-input" required placeholder=" ">
+                <label class="input-label">Username</label>
+            </div>
+
+            <div class="input-group">
+                <input type="password" name="password" id="password" class="custom-input" required placeholder=" ">
+                <label class="input-label">Password</label>
+                <span class="toggle-pass" onclick="togglePassword()">👁</span>
+            </div>
+
+            <button class="btn-premium mt-2">Login</button>
+
+        </form>
+
+        <p class="text-center mt-3">
+            New user?
+            <a href="{% url 'register' %}" class="login-link">Create Account</a>
+        </p>
+
+    </div>
+
+</div>
+
+<script>
+    function togglePassword() {
+        var input = document.getElementById("password");
+        input.type = input.type === "password" ? "text" : "password";
+    }
+</script>
+
+</body>
+</html>

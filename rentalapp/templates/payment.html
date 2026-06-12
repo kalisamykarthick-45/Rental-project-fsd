@@ -1,0 +1,222 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Premium Payment</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+/* ===== BODY ===== */
+body{
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    font-family: 'Poppins', sans-serif;
+    color:white;
+}
+
+/* ===== CONTAINER ===== */
+.payment-container{
+    max-width:500px;
+    margin:50px auto;
+    padding:30px;
+    border-radius:25px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    box-shadow:0 25px 60px rgba(0,0,0,0.6);
+    animation: fadeUp 0.8s ease;
+}
+
+@keyframes fadeUp{
+    from{opacity:0; transform:translateY(40px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+/* ===== TITLE ===== */
+.title{
+    text-align:center;
+    font-size:30px;
+    font-weight:700;
+    margin-bottom:20px;
+}
+
+/* ===== AMOUNT ===== */
+.amount-box{
+    text-align:center;
+    padding:15px;
+    border-radius:15px;
+    background: linear-gradient(135deg,#00c6ff,#0072ff);
+    font-size:22px;
+    font-weight:600;
+    margin-bottom:25px;
+}
+
+/* ===== OPTIONS ===== */
+.option{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px;
+    border-radius:15px;
+    margin-bottom:12px;
+    background: rgba(255,255,255,0.07);
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.option:hover{
+    transform:scale(1.03);
+    background: linear-gradient(90deg,#00c6ff,#0072ff);
+    color:black;
+}
+
+.option.active{
+    border:1px solid #00c6ff;
+    box-shadow:0 0 15px #00c6ff;
+}
+
+/* ===== QR BOX ===== */
+.qr-box{
+    text-align:center;
+    margin-top:20px;
+    display:none;
+}
+
+.qr-box img{
+    border-radius:15px;
+    padding:10px;
+    background:white;
+}
+
+/* ===== UPLOAD ===== */
+.upload-box{
+    display:none;
+    margin-top:20px;
+}
+
+/* ===== BUTTON ===== */
+.pay-btn{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:15px;
+    background: linear-gradient(90deg,#00c6ff,#0072ff);
+    color:white;
+    font-size:18px;
+    margin-top:20px;
+}
+
+.pay-btn:hover{
+    transform:scale(1.05);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="payment-container">
+
+<div class="title">💳 Secure Payment</div>
+
+<div class="amount-box">
+    ₹{{ booking.total_price }}
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+
+<!-- PAYMENT OPTIONS -->
+
+<div class="option" onclick="selectPayment(this,'gpay')">
+    <div><input type="radio" name="payment" value="gpay"> Google Pay</div>
+    <span>🟢</span>
+</div>
+
+<div class="option" onclick="selectPayment(this,'phonepe')">
+    <div><input type="radio" name="payment" value="phonepe"> PhonePe</div>
+    <span>🟣</span>
+</div>
+
+<div class="option" onclick="selectPayment(this,'paytm')">
+    <div><input type="radio" name="payment" value="paytm"> Paytm</div>
+    <span>🔵</span>
+</div>
+
+<div class="option" onclick="selectPayment(this,'offline')">
+    <div><input type="radio" name="payment" value="offline"> Cash on Pickup</div>
+    <span>💵</span>
+</div>
+
+<!-- QR BOX -->
+<div class="qr-box" id="qr-box">
+    <h5 class="mt-3">Scan & Pay</h5>
+    <img id="qr-img" width="200">
+    <p id="upi-text" class="fw-bold mt-2"></p>
+</div>
+
+<!-- UPLOAD BOX -->
+<div class="upload-box" id="upload-box">
+    <label class="fw-bold mb-2">📸 Upload Payment Screenshot</label>
+    <input type="file" name="payment_proof" class="form-control bg-dark text-white border-0">
+</div>
+
+<button type="submit" class="pay-btn">Confirm Payment 🚀</button>
+
+</form>
+
+</div>
+
+<!-- Hidden QR Images -->
+<img id="gpay-img" src="{% static 'images/g pay.jpg' %}" hidden>
+<img id="phonepe-img" src="{% static 'images/phone pay.png' %}" hidden>
+<img id="paytm-img" src="{% static 'images/paytm.png' %}" hidden>
+
+<script>
+
+function selectPayment(element, method){
+
+    document.querySelectorAll(".option").forEach(opt=>{
+        opt.classList.remove("active");
+    });
+
+    element.classList.add("active");
+
+    document.querySelector(`input[value="${method}"]`).checked = true;
+
+    let qrBox = document.getElementById("qr-box");
+    let qrImg = document.getElementById("qr-img");
+    let upiText = document.getElementById("upi-text");
+    let uploadBox = document.getElementById("upload-box");
+
+    if(method === "gpay"){
+        qrBox.style.display = "block";
+        uploadBox.style.display = "block";
+        qrImg.src = document.getElementById("gpay-img").src;
+        upiText.innerText = "UPI: 9876543210@upi";
+    }
+    else if(method === "phonepe"){
+        qrBox.style.display = "block";
+        uploadBox.style.display = "block";
+        qrImg.src = document.getElementById("phonepe-img").src;
+        upiText.innerText = "UPI: 9876543210@ybl";
+    }
+    else if(method === "paytm"){
+        qrBox.style.display = "block";
+        uploadBox.style.display = "block";
+        qrImg.src = document.getElementById("paytm-img").src;
+        upiText.innerText = "UPI: 9876543210@paytm";
+    }
+    else{
+        qrBox.style.display = "none";
+        uploadBox.style.display = "none";
+    }
+}
+
+</script>
+
+</body>
+</html>

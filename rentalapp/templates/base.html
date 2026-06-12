@@ -1,0 +1,522 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentX Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #f43f5e;
+            --bg-glass: rgba(255, 255, 255, 0.95);
+            --text-main: #1e293b;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .rx-nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--bg-glass);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 0.75rem 0;
+        }
+
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 2rem;
+        }
+
+        /* Logo */
+        .rx-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .logo-text span {
+            color: var(--primary);
+        }
+
+        /* Desktop Search */
+        .rx-search-wrapper {
+            flex: 1;
+            max-width: 400px;
+            margin: 0 2rem;
+        }
+
+        .rx-search {
+            background: #f1f5f9;
+            border-radius: 50px;
+            padding: 5px 5px 5px 20px;
+            display: flex;
+            align-items: center;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .rx-search:focus-within {
+            background: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .rx-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-weight: 500;
+        }
+
+        .search-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Links & Buttons */
+        .rx-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .rx-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+        }
+
+        .rx-links a:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .btn-reg {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white !important;
+            padding: 10px 24px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            transition: var(--transition);
+        }
+
+        .btn-login {
+            padding: 10px 24px;
+            color: var(--text-main) !important;
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition);
+        }
+
+        /* User Dropdown */
+        .rx-dropdown {
+            position: relative;
+        }
+
+        .user-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .user-btn img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+        }
+
+        .rx-dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 120%;
+            background: white;
+            min-width: 200px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            display: none;
+            z-index: 1100;
+        }
+
+        .rx-dropdown-menu a,
+        .logout-form button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            text-decoration: none;
+            color: var(--text-main);
+            border-radius: 8px;
+            width: 100%;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .rx-dropdown-menu a:hover {
+            background: #f8fafc;
+            color: var(--primary);
+        }
+
+        /* Hamburger */
+        .rx-hamburger {
+            font-size: 1.5rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: none;
+            color: var(--text-main);
+        }
+
+        /* Mobile Drawer Fixes */
+        .rx-drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 2000;
+            transition: 0.5s cubic-bezier(0.7, 0, 0.3, 1);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rx-drawer.active {
+            right: 0;
+        }
+
+        .drawer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            display: none;
+            z-index: 1999;
+            backdrop-filter: blur(4px);
+        }
+
+        .drawer-overlay.active {
+            display: block;
+        }
+
+        /* Mobile Search Bar inside Drawer */
+        .drawer-search-container {
+            margin: 1.5rem 0 1rem 0;
+            display: none;
+        }
+
+        .drawer-search {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .drawer-search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            width: 100%;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .drawer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .drawer-links a {
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: 0.2s;
+        }
+
+        .drawer-links a:hover {
+            background: #f1f5f9;
+            color: var(--primary);
+        }
+
+        .admin-mobile-btn {
+            background: #fff1f2 !important;
+            color: var(--accent) !important;
+        }
+
+        @media (max-width: 1024px) {
+
+            .rx-links,
+            .rx-search-wrapper,
+            .btn-reg,
+            .btn-login,
+            .rx-dropdown {
+                display: none !important;
+            }
+
+            .rx-hamburger {
+                display: block !important;
+            }
+
+            .drawer-search-container {
+                display: block;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="rx-nav">
+        <div class="nav-container">
+
+            <a class="rx-logo" href="{% url 'home' %}">
+                <div class="logo-icon"><i class="fas fa-key"></i></div>
+                <span class="logo-text">Rent<span>X</span> <small>Pro</small></span>
+            </a>
+
+            <div class="rx-search-wrapper">
+                <div class="rx-search">
+                    <input type="text" id="searchInput" class="main-search-input" placeholder="Search bikes...">
+                    <button class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            <div class="rx-links">
+                {% if request.user.is_authenticated %}
+                <a href="{% url 'home' %}"><i class="fas fa-house"></i> Home</a>
+                <a href="{% url 'bike' %}"><i class="fas fa-motorcycle"></i> Bikes</a>
+                <a href="{% url 'laptop' %}"><i class="fas fa-laptop"></i> Laptops</a>
+                <a href="{% url 'camera' %}"><i class="fas fa-camera"></i> Cameras</a>
+                {% if request.user.is_staff %}
+                <a href="{% url 'admin_dashboard' %}" style="color: var(--accent);">
+                    <i class="fas fa-shield-halved"></i> Admin
+                </a>
+                {% endif %}
+                {% endif %}
+            </div>
+
+            <div class="rx-right">
+                {% if request.user.is_authenticated %}
+
+                <div class="rx-dropdown">
+                    <button class="user-btn" onclick="toggleMenu()">
+                        <img src="https://ui-avatars.com/api/?name={{ user.username }}&background=6366f1&color=fff"
+                            alt="user">
+                        <span>{{ user.username }}</span>
+                        <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                    </button>
+                    <div id="menu" class="rx-dropdown-menu">
+                        <a href="{% url 'profile' %}"><i class="fas fa-user-circle"></i> Profile</a>
+                        <a href="{% url 'my_bookings' %}"><i class="fas fa-calendar-check"></i> Bookings</a>
+                        <hr style="opacity: 0.1;">
+                        <form method="post" action="{% url 'logout' %}" class="logout-form">
+                            {% csrf_token %}
+                            <button type="submit"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                        </form>
+                    </div>
+                </div>
+                {% else %}
+                <a href="{% url 'login' %}" class="btn-login">Login</a>
+                <a href="{% url 'register' %}" class="btn-reg"><i class="fas fa-user-plus"></i> Register</a>
+                {% endif %}
+
+                <button class="rx-hamburger" onclick="toggleDrawer()">
+                    <i class="fas fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="overlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
+
+    <div id="drawer" class="rx-drawer">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-weight: 800; color: var(--primary); font-size: 1.2rem;">RentX Pro</span>
+            <button onclick="toggleDrawer()"
+                style="background: #f1f5f9; border: none; font-size: 1.2rem; width: 35px; height: 35px; border-radius: 50%; cursor: pointer;">&times;</button>
+        </div>
+
+        <div class="drawer-search-container">
+            <div class="drawer-search">
+                <i class="fas fa-search" style="color: #94a3b8;"></i>
+                <input type="text" id="searchInput" class="mobile-search-input" placeholder="Search products...">
+            </div>
+        </div>
+
+        <div class="drawer-links">
+            {% if user.is_authenticated %}
+            <a href="{% url 'home' %}"><i class="fas fa-house"></i> Home</a>
+            <a href="{% url 'bike' %}"><i class="fas fa-motorcycle"></i> Bikes</a>
+            <a href="{% url 'laptop' %}"><i class="fas fa-laptop"></i> Laptops</a>
+            <a href="{% url 'camera' %}"><i class="fas fa-camera"></i> Cameras</a>
+            <a href="{% url 'my_bookings' %}"><i class="fas fa-calendar-check"></i> My Bookings</a>
+            <a href="{% url 'profile' %}"><i class="fas fa-user-circle"></i> My Profile</a>
+
+            {% if request.user.is_staff %}
+            <a href="{% url 'admin_dashboard' %}" style="color: var(--accent);">
+                <i class="fas fa-shield-halved"></i> Admin
+            </a>
+            {% endif %}
+
+            <hr style="width: 100%; opacity: 0.1; margin: 10px 0;">
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit"
+                    style="width:100%; text-align:left; background:none; border:none; padding:12px; font-weight:700; color: var(--accent); cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 1rem;">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </form>
+            {% else %}
+            <a href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+            <a href="{% url 'register' %}" style="background: var(--primary); color: white;"><i
+                    class="fas fa-user-plus"></i> Register</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% block content %}{% endblock %}
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('menu');
+            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function toggleDrawer() {
+            document.getElementById('drawer').classList.toggle('active');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+
+
+
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const searchInput = document.getElementById("searchInput");
+
+            if (!searchInput) {
+                console.log("Search input not found ❌");
+                return;
+            }
+
+            searchInput.addEventListener("keyup", function () {
+
+                let value = this.value.toLowerCase().trim();
+                let cards = document.querySelectorAll(".rx-card");
+
+                console.log("Typing:", value);
+
+                cards.forEach(card => {
+
+                    let text = card.innerText.toLowerCase();
+
+                    if (value === "") {
+                        card.style.display = "block";
+                    } else if (text.includes(value)) {
+                        card.style.display = "block";
+                    } else {
+                        card.style.display = "none";
+                    }
+
+                });
+            });
+
+        });
+    </script>
+
+
+
+
+
+</body>
+
+</html>

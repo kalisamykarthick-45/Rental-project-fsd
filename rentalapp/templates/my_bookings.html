@@ -1,0 +1,488 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Bookings | Premium Hub</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #030508;
+            --card-glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --accent-cyan: #00f2fe;
+            --accent-blue: #4facfe;
+            --neon-green: #00ff88;
+            --neon-red: #ff416c;
+            --neon-orange: #ffb347;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(79, 172, 254, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.1) 0%, transparent 40%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- TITLE DESIGN --- */
+        .page-header {
+            text-align: center;
+            padding: 80px 0 40px;
+        }
+
+        .main-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -2px;
+            background: linear-gradient(to bottom, #fff 40%, #64748b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        /* --- SECTION TITLES --- */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 60px 0 30px;
+        }
+
+        .section-divider h4 {
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin: 0;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .section-divider .line {
+            flex-grow: 1;
+            height: 1px;
+            background: linear-gradient(to right, var(--border), transparent);
+        }
+
+        /* --- PREMIUM CARDS --- */
+        .premium-card {
+            background: var(--card-glass);
+            border: 1px solid var(--border);
+            border-radius: 32px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            height: 100%;
+            position: relative;
+        }
+
+        .premium-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: rgba(79, 172, 254, 0.4);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .img-wrapper {
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .booking-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.8s;
+        }
+
+        .premium-card:hover .booking-img {
+            transform: scale(1.1);
+            filter: brightness(0.8);
+        }
+
+        /* --- STATUS BADGES --- */
+        .status-overlay {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 2;
+        }
+
+        .custom-badge {
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .badge-Pending {
+            background: rgba(255, 179, 71, 0.15);
+            color: var(--neon-orange);
+            box-shadow: 0 0 15px rgba(255, 179, 71, 0.2);
+        }
+
+        .badge-Approved {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--neon-green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .badge-Rejected {
+            background: rgba(255, 65, 108, 0.15);
+            color: var(--neon-red);
+            box-shadow: 0 0 15px rgba(255, 65, 108, 0.2);
+        }
+
+        .badge-Returned {
+            background: rgba(79, 172, 254, 0.15);
+            color: var(--accent-blue);
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.2);
+        }
+
+        /* --- CARD BODY --- */
+        .card-content {
+            padding: 30px;
+        }
+
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .date-info {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+        }
+
+        .price-tag {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .price-tag span {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 400;
+        }
+
+        /* --- LATE FEES --- */
+        .late-fee-alert {
+            background: rgba(255, 65, 108, 0.1);
+            border: 1px dashed var(--neon-red);
+            padding: 10px;
+            border-radius: 15px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+            color: var(--neon-red);
+            font-weight: 600;
+        }
+
+        .btn-premium-action {
+            width: 100%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: #000;
+            font-weight: 800;
+            border: none;
+            padding: 12px;
+            border-radius: 14px;
+            margin-top: 15px;
+            transition: 0.3s;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .btn-premium-action:hover {
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.4);
+            transform: scale(1.02);
+            color: #000;
+        }
+
+        /* --- EMPTY STATE --- */
+        .empty-state {
+            padding: 100px 0;
+            text-align: center;
+            color: #475569;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+
+        /* --- FLOATING ADMIN PORTAL BUTTON --- */
+        .admin-access-layer {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            z-index: 1000;
+        }
+
+        .btn-admin-portal {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            backdrop-filter: blur(15px);
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .btn-admin-portal i {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+        }
+
+        .portal-glow {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-admin-portal:hover {
+            background: #fff;
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-admin-portal:hover i {
+            color: #000;
+        }
+
+        .btn-admin-portal:hover .portal-glow {
+            left: 100%;
+        }
+
+       
+        @media (max-width: 768px) {
+            .admin-access-layer {
+                top: 20px;
+                right: 20px;
+            }
+
+            .btn-admin-portal span {
+                display: none;
+                
+            }
+
+            .btn-admin-portal {
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+
+    {% if request.user.is_staff %}
+    <div class="admin-access-layer">
+        <a href="{% url 'admin_dashboard' %}" class="btn-admin-portal">
+            <div class="portal-glow"></div>
+            <i class="bi bi-shield-lock-fill"></i>
+            <span>Admin Control</span>
+        </a>
+    </div>
+    {% endif %}
+
+    <div class="container pb-5">
+
+        <header class="page-header">
+            <h1 class="main-title">My Bookings</h1>
+            <p class="text-muted fw-bold">Manage your active rentals and track history</p>
+        </header>
+
+        <div class="section-divider">
+            <h4><i class="bi bi-bicycle me-2 text-info"></i> Motor Fleet</h4>
+            <div class="line"></div>
+        </div>
+
+        <div class="row g-4">
+            {% for b in bike_bookings %}
+            <div class="col-lg-4 col-md-6">
+                <div class="premium-card">
+                    <div class="img-wrapper">
+                        <img src="{{ b.bike.image.url }}" class="booking-img" alt="Bike">
+                        <div class="status-overlay">
+                            <span class="custom-badge badge-{{ b.status }}">{{ b.status }}</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h5 class="item-name">{{ b.bike.name }}</h5>
+                        <div class="date-info">
+                            <i class="bi bi-calendar3"></i>
+                            {{ b.start_date }} <i class="bi bi-arrow-right mx-1"></i> {{ b.end_date }}
+                        </div>
+
+                        <div class="price-row">
+                            <div class="price-tag">₹{{ b.total_price }} <span>Total</span></div>
+                        </div>
+
+                        {% if b.late_fees > 0 %}
+                        <div class="late-fee-alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Late Fees: ₹{{ b.late_fees }}
+                        </div>
+                        {% endif %}
+
+                        {% if request.user.is_staff %}
+                        <a href="{% url 'late_fees' 'bike' b.id %}" class="btn btn-premium-action">
+                            <i class="bi bi-plus-circle me-1"></i> Add Late Fees
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state col-12">
+                <i class="bi bi-archive"></i>
+                <p>No Bike Bookings Found</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-divider">
+            <h4><i class="bi bi-laptop me-2 text-primary"></i> Tech Gear</h4>
+            <div class="line"></div>
+        </div>
+
+        <div class="row g-4">
+            {% for b in laptop_bookings %}
+            <div class="col-lg-4 col-md-6">
+                <div class="premium-card">
+                    <div class="img-wrapper">
+                        <img src="{{ b.laptop.image.url }}" class="booking-img" alt="Laptop">
+                        <div class="status-overlay">
+                            <span class="custom-badge badge-{{ b.status }}">{{ b.status }}</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h5 class="item-name">{{ b.laptop.name }}</h5>
+                        <div class="date-info">
+                            <i class="bi bi-calendar3"></i>
+                            {{ b.start_date }} <i class="bi bi-arrow-right mx-1"></i> {{ b.end_date }}
+                        </div>
+
+                        <div class="price-row">
+                            <div class="price-tag">₹{{ b.total_price }} <span>Total</span></div>
+                        </div>
+
+                        {% if b.late_fees > 0 %}
+                        <div class="late-fee-alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Late Fees: ₹{{ b.late_fees }}
+                        </div>
+                        {% endif %}
+
+                        {% if request.user.is_staff %}
+                        <a href="{% url 'late_fees' 'laptop' b.id %}" class="btn btn-premium-action">
+                            <i class="bi bi-plus-circle me-1"></i> Add Late Fees
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state col-12">
+                <i class="bi bi-laptop"></i>
+                <p>No Laptop Bookings Found</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="section-divider">
+            <h4><i class="bi bi-camera me-2 text-success"></i> Optical Assets</h4>
+            <div class="line"></div>
+        </div>
+
+        <div class="row g-4">
+            {% for b in camera_bookings %}
+            <div class="col-lg-4 col-md-6">
+                <div class="premium-card">
+                    <div class="img-wrapper">
+                        <img src="{{ b.camera.image.url }}" class="booking-img" alt="Camera">
+                        <div class="status-overlay">
+                            <span class="custom-badge badge-{{ b.status }}">{{ b.status }}</span>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <h5 class="item-name">{{ b.camera.name }}</h5>
+                        <div class="date-info">
+                            <i class="bi bi-calendar3"></i>
+                            {{ b.start_date }} <i class="bi bi-arrow-right mx-1"></i> {{ b.end_date }}
+                        </div>
+
+                        <div class="price-row">
+                            <div class="price-tag">₹{{ b.total_price }} <span>Total</span></div>
+                        </div>
+
+                        {% if b.late_fees > 0 %}
+                        <div class="late-fee-alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i> Late Fees: ₹{{ b.late_fees }}
+                        </div>
+                        {% endif %}
+
+                        {% if request.user.is_staff %}
+                        <a href="{% url 'late_fees' 'camera' b.id %}" class="btn btn-premium-action">
+                            <i class="bi bi-plus-circle me-1"></i> Add Late Fees
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-state col-12">
+                <i class="bi bi-camera"></i>
+                <p>No Camera Bookings Found</p>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

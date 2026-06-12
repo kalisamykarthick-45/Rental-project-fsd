@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptops | Premium Tech Rentals</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --bg: #02050a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 210, 255, 0.1), transparent 50%);
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+        }
+
+        /* --- NAVIGATION --- */
+        .top-nav { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; }
+        .btn-glass {
+            background: var(--card-bg); border: 1px solid var(--border);
+            color: #fff; padding: 10px 22px; border-radius: 12px;
+            text-decoration: none; backdrop-filter: blur(10px); transition: 0.3s;
+            font-weight: 600; font-size: 0.9rem;
+        }
+        .btn-glass:hover { background: #fff; color: #000; transform: translateY(-3px); }
+
+        /* --- TITLE --- */
+        .page-title {
+            font-size: 3.5rem; font-weight: 900; text-align: center;
+            background: linear-gradient(to bottom, #fff, var(--primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: -2px; margin-top: 20px;
+        }
+
+        /* --- CARDS --- */
+        .rent-card {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: 30px; overflow: hidden; transition: 0.5s;
+            backdrop-filter: blur(20px); height: 100%; position: relative;
+        }
+        .rent-card:hover {
+            transform: translateY(-12px); border-color: var(--primary);
+            box-shadow: 0 20px 60px rgba(0, 210, 255, 0.15);
+        }
+
+        .img-container { position: relative; height: 220px; overflow: hidden; }
+        .img-container img { width: 100%; height: 100%; object-fit: cover; transition: 0.8s; }
+        .rent-card:hover img { transform: scale(1.1) rotate(1deg); }
+
+        .badge-status {
+            position: absolute; top: 15px; right: 15px;
+            padding: 6px 14px; border-radius: 50px; font-size: 10px; font-weight: 800;
+        }
+        .available { background: rgba(0, 210, 255, 0.15); color: #00d2ff; border: 1px solid #00d2ff; }
+        .booked { background: rgba(255, 255, 255, 0.05); color: #64748b; border: 1px solid #64748b; }
+
+        .rent-details { padding: 30px; }
+        .specs { display: flex; gap: 8px; margin-bottom: 25px; }
+        .specs span {
+            flex: 1; background: rgba(255,255,255,0.04);
+            padding: 10px 5px; border-radius: 12px; text-align: center; font-size: 10px;
+            color: #94a3b8; border: 1px solid var(--border);
+        }
+
+        .price { font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 20px; }
+        .price span { font-size: 0.8rem; color: #64748b; margin-left: 5px; }
+
+        .rent-btn {
+            display: block; width: 100%; padding: 15px; border-radius: 16px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff; text-decoration: none; text-align: center;
+            font-weight: 800; letter-spacing: 1px; transition: 0.3s;
+            border: none;
+        }
+        .rent-btn:hover { box-shadow: 0 10px 25px rgba(0, 210, 255, 0.4); transform: scale(1.02); color: #fff; }
+
+        @media (max-width: 768px) { .page-title { font-size: 2.5rem; } .top-nav { padding: 20px; } }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <a href="{% url 'home' %}" class="btn-glass"><i class="bi bi-chevron-left me-2"></i>HOME</a>
+    {% if request.user.is_staff %}
+    <a href="{% url 'admin_dashboard' %}" class="btn-glass text-info"><i class="bi bi-cpu me-2"></i>ADMIN DASHBOARD</a>
+    {% endif %}
+</div>
+
+<div class="container py-4">
+    <h1 class="page-title mb-5">TECH TERMINAL</h1>
+
+    <div class="row g-4">
+        {% for product in products %}
+        <div class="col-lg-4 col-md-6">
+            <div class="rent-card">
+                <div class="img-container">
+                    <img src="{{ product.image.url|default:'/static/default.jpg' }}">
+                    {% if product.available %}
+                    <span class="badge-status available">SYSTEM READY</span>
+                    {% else %}
+                    <span class="badge-status booked">DEPLOYED</span>
+                    {% endif %}
+                </div>
+                <div class="rent-details">
+                    <h4 class="fw-800 mb-3">{{ product.name }}</h4>
+                    <div class="specs">
+                        <span><i class="bi bi-memory"></i> {{ product.ram }}</span>
+                        <span><i class="bi bi-cpu"></i> {{ product.processor }}</span>
+                        <span><i class="bi bi-hdd"></i> {{ product.storage }}</span>
+                    </div>
+                    <div class="price">₹{{ product.price_per_day }}<span>/ day</span></div>
+                    
+                    {% if product.available %}
+                    <a href="{% url 'book_laptop' product.id %}" class="rent-btn">INITIALIZE RENTAL</a>
+                    {% else %}
+                    <button class="rent-btn" style="background: #1e293b; color: #475569;" disabled>UNAVAILABLE</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>
